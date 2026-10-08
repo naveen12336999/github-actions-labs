@@ -16,6 +16,8 @@ jobs:
           echo "Job 1 Finished"
 
   job2:
+    needs: job1
+
     runs-on: ubuntu-latest
 
     steps:
