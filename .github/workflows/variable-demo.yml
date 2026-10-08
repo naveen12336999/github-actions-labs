@@ -1,0 +1,13 @@
+name: Variable Demo
+
+on:
+  push:
+
+jobs:
+  variable-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Variable
+        run: |
+          echo "App Name is ${{ vars.APP_NAME }}"
