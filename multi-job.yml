@@ -1,0 +1,26 @@
+name: Multi Job Demo
+
+on:
+  push:
+
+jobs:
+
+  job1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Job 1 Step
+        run: |
+          echo "Job 1 Started"
+          sleep 15
+          echo "Job 1 Finished"
+
+  job2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Job 2 Step
+        run: |
+          echo "Job 2 Started"
+          sleep 15
+          echo "Job 2 Finished"
