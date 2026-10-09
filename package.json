@@ -1,0 +1,13 @@
+
+{
+  "name": "github-actions-cache-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GitHub Actions npm caching practice",
+  "scripts": {
+    "test": "node -e \"console.log('Application test passed')\""
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
