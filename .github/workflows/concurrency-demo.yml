@@ -1,0 +1,20 @@
+
+name: Concurrency Demo
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: concurrency-demo
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Simulate Long Task
+        run: |
+          echo "Workflow started"
+          sleep 60
+          echo "Workflow completed"
