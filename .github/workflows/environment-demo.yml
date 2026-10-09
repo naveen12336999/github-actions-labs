@@ -1,0 +1,27 @@
+
+name: Environment Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    environment: Dev
+    steps:
+      - name: Show Environment
+        run: echo "Environment is ${{ vars.APP_ENV }}"
+
+  deploy-qa:
+    runs-on: ubuntu-latest
+    environment: QA
+    steps:
+      - name: Show Environment
+        run: echo "Environment is ${{ vars.APP_ENV }}"
+
+  deploy-prod:
+    runs-on: ubuntu-latest
+    environment: Prod
+    steps:
+      - name: Show Environment
+        run: echo "Environment is ${{ vars.APP_ENV }}"
