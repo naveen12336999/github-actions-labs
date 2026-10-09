@@ -1,0 +1,25 @@
+
+name: Failure Handling Lab
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Successful Step
+        run: echo "Step 1 passed"
+
+      - name: Simulate Test Failure
+        run: |
+          echo "Running tests..."
+          exit 1
+
+      - name: Report Failure
+        if: failure()
+        run: echo "The test failed. Investigate the logs."
+
+      - name: Final Report
+        if: always()
+        run: echo "Final reporting step executed"
