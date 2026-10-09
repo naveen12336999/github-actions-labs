@@ -1,0 +1,21 @@
+
+name: Permissions Demo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  permission-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify Repository Access
+        run: |
+          echo "Repository checkout succeeded"
+          ls -la
