@@ -13,6 +13,7 @@ jobs:
         run: echo "Environment is ${{ vars.APP_ENV }}"
 
   deploy-qa:
+    needs: deploy-dev
     runs-on: ubuntu-latest
     environment: QA
     steps:
@@ -20,8 +21,10 @@ jobs:
         run: echo "Environment is ${{ vars.APP_ENV }}"
 
   deploy-prod:
+    needs: deploy-qa
     runs-on: ubuntu-latest
     environment: Prod
     steps:
       - name: Show Environment
         run: echo "Environment is ${{ vars.APP_ENV }}"
+
