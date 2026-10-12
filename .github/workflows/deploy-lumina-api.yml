@@ -50,4 +50,3 @@ jobs:
         with:
           app-name: ${{ vars.AZURE_API_APP_NAME }}
           package: ./publish/api
-```
