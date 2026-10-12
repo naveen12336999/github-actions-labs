@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumina Store</title>
+  <base href="/" />
+  <link rel="stylesheet" href="css/app.css" />
+  <link href="Shop.Web.styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="_framework/blazor.webassembly.js"></script>
+  <script>
+    // 3D tilt: pointer position drives CSS variables on the hovered card
+    document.addEventListener('pointermove', e => {
+      const c = e.target.closest?.('.tilt'); if (!c) return;
+      const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      c.style.setProperty('--ry', ((x - .5) * 18).toFixed(1) + 'deg');
+      c.style.setProperty('--rx', ((.5 - y) * 18).toFixed(1) + 'deg');
+      c.style.setProperty('--mx', (x * 100) + '%'); c.style.setProperty('--my', (y * 100) + '%');
+    });
+    document.addEventListener('pointerout', e => {
+      const c = e.target.closest?.('.tilt');
+      if (c && !c.contains(e.relatedTarget)) { c.style.setProperty('--rx', '0deg'); c.style.setProperty('--ry', '0deg'); }
+    });
+  </script>
+</body>
+</html>
