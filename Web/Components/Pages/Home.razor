@@ -1,0 +1,99 @@
+@page "/"
+@implements IDisposable
+@inject ShopApi Api
+@inject CartState Cart
+
+<PageTitle>Lumina Store</PageTitle>
+<header class="top glass">
+    <h1>Lumina<span>Store</span></h1>
+    <input class="search glass" placeholder="Search products…" @bind="query" @bind:event="oninput" @bind:after="Load" />
+    <button class="cart-btn" @onclick="() => open = !open">🛒 <b>@Cart.Count</b></button>
+</header>
+
+@if (error is not null) { <p class="empty">@error</p> }
+else if (products is null) { <p class="empty">Loading…</p> }
+else if (products.Count == 0) { <p class="empty">No products found.</p> }
+else
+{
+    <main class="grid">
+        @foreach (var p in products)
+        {
+            <article class="card tilt" @key="p.Id">
+                <div class="gloss"></div>
+                <div class="emoji">@p.ImageUrl</div>
+                <h3>@p.Name</h3>
+                <p>@p.Description</p>
+                <div class="row">
+                    <span class="price">@p.Price.ToString("C")</span>
+                    <button class="btn" disabled="@(p.Stock == 0)" @onclick="() => Cart.Add(p)">
+                        @(p.Stock == 0 ? "Sold out" : "Add")
+                    </button>
+                </div>
+                <small>@p.Stock in stock</small>
+            </article>
+        }
+    </main>
+}
+
+@if (open)
+{
+    <aside class="drawer glass">
+        <h2>Your cart</h2>
+        @foreach (var (p, qty) in Cart.Items)
+        {
+            <div class="line"><span>@p.ImageUrl @p.Name × @qty</span>
+                <button class="mini" @onclick="() => Cart.Remove(p.Id)">−</button></div>
+        }
+        @if (Cart.Count == 0) { <p class="empty">Cart is empty.</p> }
+        else
+        {
+            <p class="total">Total <b>@Cart.Total.ToString("C")</b></p>
+            <input class="search glass" type="email" placeholder="you@email.com" @bind="email" />
+            <button class="btn wide" disabled="@busy" @onclick="Checkout">@(busy ? "Placing…" : "Place order")</button>
+        }
+        @if (message is not null) { <p class="msg">@message</p> }
+    </aside>
+}
+
+@code {
+    List<ProductDto>? products;
+    string query = "", email = "";
+    string? error, message;
+    bool open, busy;
+    Action? onCartChanged;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cart events can fire outside the renderer's sync context, so marshal via InvokeAsync.
+        onCartChanged = () => InvokeAsync(StateHasChanged);
+        Cart.Changed += onCartChanged;
+        await Load();
+    }
+
+    public void Dispose() { if (onCartChanged is not null) Cart.Changed -= onCartChanged; }
+
+    async Task Load()
+    {
+        try { products = await Api.ListProductsAsync(query); error = null; }
+        catch (HttpRequestException) { error = "Cannot reach the API. Is it running?"; }
+    }
+
+    async Task Checkout()
+    {
+        busy = true; message = null;
+        try
+        {
+            var input = new OrderInput(email, Cart.Items.Select(i => new OrderLineInput(i.Product.Id, i.Qty)).ToList());
+            var (order, status) = await Api.PlaceOrderAsync(input);
+            if (order is not null)
+            {
+                message = $"Order #{order.Id} confirmed — {order.Total:C}";
+                Cart.Clear(); await Load();
+            }
+            else message = status == System.Net.HttpStatusCode.Conflict
+                ? "Some items are out of stock." : "Check your email and cart, then retry.";
+        }
+        catch (HttpRequestException) { message = "Network error."; }
+        finally { busy = false; }
+    }
+}

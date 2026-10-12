@@ -1,0 +1,10 @@
+@page "/Error"
+@using System.Diagnostics
+
+<PageTitle>Error</PageTitle>
+<p class="empty">Something went wrong.@(RequestId is null ? "" : $" Request ID: {RequestId}")</p>
+
+@code {
+    [CascadingParameter] private HttpContext? HttpContext { get; set; }
+    private string? RequestId => Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+}
