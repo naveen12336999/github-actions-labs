@@ -46,7 +46,11 @@ products.MapGet("/", async (ShopDb db, string? q, CancellationToken ct) =>
 {
     var query = db.Products.AsNoTracking();
     if (!string.IsNullOrWhiteSpace(q)) query = query.Where(p => EF.Functions.Like(p.Name, $"%{q}%"));
-    return Results.Ok(await query.OrderBy(p => p.Name).Select(p => ToDto(p)).ToListAsync(ct));
+    var productsList = await query
+    .OrderBy(p => p.Name)
+    .ToListAsync(ct);
+
+return Results.Ok(productsList.Select(p => ToDto(p)));
 });
 products.MapGet("/{id:int}", async (int id, ShopDb db) =>
     await db.Products.FindAsync(id) is { } p ? Results.Ok(ToDto(p)) : Results.NotFound());
