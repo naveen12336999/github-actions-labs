@@ -43,8 +43,9 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy frontend to Azure App Service
+      - name: Deploy frontend to staging slot
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ vars.APP_NAME }}
+          slot-name: staging
           package: ./publish/web
